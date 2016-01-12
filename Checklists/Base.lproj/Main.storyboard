@@ -38,7 +38,7 @@
                     <navigationItem key="navigationItem" title="Checklists" id="Fvh-S3-BcH">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="bC7-nO-D46">
                             <connections>
-                                <segue destination="ec0-JD-8Mn" kind="presentation" id="nGx-sQ-zm0"/>
+                                <segue destination="ec0-JD-8Mn" kind="presentation" identifier="AddItem" id="nGx-sQ-zm0"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -54,7 +54,7 @@
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="h32-Kg-2qk">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                         <sections>
                             <tableViewSection id="i3t-Bs-dK5">
                                 <cells>
