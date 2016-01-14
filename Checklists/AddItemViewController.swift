@@ -10,8 +10,8 @@ import UIKit
 
 protocol AddItemViewControllerDelegate: class {
     func addItemViewControllerDidCancel(controller: AddItemViewController)
-    func addItemViewController(controller:AddItemViewController,
-        didFinishAddItem item: ChecklistItem)
+    func addItemViewController(controller: AddItemViewController, didFinishAddingItem item: ChecklistItem)
+    func addItemViewController(controller: AddItemViewController, didFinishEditingItem item: ChecklistItem)
         
 }
 
@@ -21,17 +21,24 @@ class AddItemViewController: UITableViewController, UITextFieldDelegate {
 
     @IBOutlet weak var textField: UITextField!
     
-    weak var delegrate: AddItemViewControllerDelegate?
+    weak var delegate: AddItemViewControllerDelegate?
+    
+    var itemToEdit: ChecklistItem?
     
     @IBAction func cancel(){
-        delegrate?.addItemViewControllerDidCancel(self)
+        delegate?.addItemViewControllerDidCancel(self)
     }
     
     @IBAction func done(){
-        let item = ChecklistItem()
-        item.text = textField.text!
-        item.checked = false
-        delegrate?.addItemViewController(self, didFinishAddItem: item)
+        if let item = itemToEdit {
+            item.text = textField.text!
+            delegate?.addItemViewController(self, didFinishEditingItem: item)
+        } else {
+            let item = ChecklistItem()
+            item.text = textField.text!
+            item.checked = false
+            delegate?.addItemViewController(self, didFinishAddingItem: item)
+        }
     }
     
     override func tableView(tableView: UITableView,
@@ -43,6 +50,17 @@ class AddItemViewController: UITableViewController, UITextFieldDelegate {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         textField.becomeFirstResponder()
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        tableView.rowHeight = 44
+        
+        if let item = itemToEdit {
+            title = "Edit Item"
+            textField.text = item.text
+            doneBarButton.enabled = true
+        }
     }
     
     func textField(textField: UITextField,
