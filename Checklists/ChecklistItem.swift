@@ -1,5 +1,5 @@
 //
-//   ChecklistItem.swift
+//  ChecklistItem.swift
 //  Checklists
 //
 //  Created by 仇鑫 on 15/11/4.
