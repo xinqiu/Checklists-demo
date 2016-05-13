@@ -25,14 +25,14 @@ class IconPickerViewController: UITableViewController {
         "Groceries",
         "Inbox",
         "Photos",
-        "Trips" ]
+        "Trips"]
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return icons.count
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("IconCell", forIndexPath: indexPath)
+        let cell = tableView.dequeueReusableCellWithIdentifier("IconCell")! as UITableViewCell
         
         let iconName = icons[indexPath.row]
         cell.textLabel!.text = iconName
@@ -40,6 +40,7 @@ class IconPickerViewController: UITableViewController {
         
         return cell
     }
+    
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         if let delegate = delegate {

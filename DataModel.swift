@@ -11,6 +11,16 @@ import Foundation
 class DataModel {
     var lists = [Checklist]()
     
+    var indexOfSelectedChecklist: Int{
+        get {
+            return NSUserDefaults.standardUserDefaults().integerForKey("ChecklistIndex")
+        }
+        set {
+            NSUserDefaults.standardUserDefaults().setInteger(newValue, forKey: "ChecklistIndex")
+            NSUserDefaults.standardUserDefaults().synchronize()
+        }
+    }
+    
     init() {
         loadChecklists()
         registerDefaults()
@@ -18,7 +28,7 @@ class DataModel {
     }
     
     func documentsDirectory() -> String {
-        let paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
+        let paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true) as [String]
         return paths[0]
     }
     
@@ -34,34 +44,24 @@ class DataModel {
         data.writeToFile(dataFilePath(), atomically: true)
     }
     
-    func loadChecklists() {
+    func loadChecklists(){
         let path = dataFilePath()
-        if NSFileManager.defaultManager().fileExistsAtPath(path) {
+        if NSFileManager.defaultManager().fileExistsAtPath(path){
             if let data = NSData(contentsOfFile: path) {
                 let unarchiver = NSKeyedUnarchiver(forReadingWithData: data)
                 lists = unarchiver.decodeObjectForKey("Checklists") as! [Checklist]
-                unarchiver.finishDecoding()
                 sortChecklists()
+                unarchiver.finishDecoding()
             }
         }
     }
     
     func registerDefaults() {
-        let dictionary = [ "ChecklistIndex": -1,
-                           "FirstTime": true,
-                           "ChecklistItemID": 0 ]
+        let dictionary = ["ChecklistIndex": -1,
+                          "FirstTime": true,
+                          "ChecklistItemID": 0]
         
         NSUserDefaults.standardUserDefaults().registerDefaults(dictionary)
-    }
-    
-    var indexOfSelectedChecklist: Int {
-        get {
-            return NSUserDefaults.standardUserDefaults().integerForKey("ChecklistIndex")
-        }
-        set {
-            NSUserDefaults.standardUserDefaults().setInteger(newValue, forKey: "ChecklistIndex")
-            NSUserDefaults.standardUserDefaults().synchronize()
-        }
     }
     
     func handleFirstTime() {
@@ -72,13 +72,12 @@ class DataModel {
             lists.append(checklist)
             indexOfSelectedChecklist = 0
             userDefaults.setBool(false, forKey: "FirstTime")
-            userDefaults.synchronize()
         }
     }
     
     func sortChecklists() {
-        lists.sortInPlace({ checklist1, checklist2 in
-            return checklist1.name.localizedStandardCompare(checklist2.name) == .OrderedAscending
+        lists.sortInPlace({checklist1, checklist2 in return
+            checklist1.name.localizedCompare(checklist2.name) == NSComparisonResult.OrderedAscending
         })
     }
     
@@ -89,4 +88,5 @@ class DataModel {
         userDefaults.synchronize()
         return itemID
     }
+
 }

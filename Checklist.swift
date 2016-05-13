@@ -9,13 +9,13 @@ class Checklist: NSObject, NSCoding {
         self.init(name: name, iconName: "No Icon")
     }
     
-    init(name: String, iconName: String) {
+    init(name: String,  iconName: String) {
         self.name = name
         self.iconName = iconName
         super.init()
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    required init(coder aDecoder: NSCoder) {
         name = aDecoder.decodeObjectForKey("Name") as! String
         items = aDecoder.decodeObjectForKey("Items") as! [ChecklistItem]
         iconName = aDecoder.decodeObjectForKey("IconName") as! String
@@ -30,10 +30,11 @@ class Checklist: NSObject, NSCoding {
     
     func countUncheckedItems() -> Int {
         var count = 0
-        for item in items where !item.checked {
-            count += 1
+        for item in items {
+            if !item.checked {
+                count += 1
+            }
         }
         return count
     }
-    
 }

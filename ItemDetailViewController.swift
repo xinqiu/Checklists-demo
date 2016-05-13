@@ -1,4 +1,3 @@
-import Foundation
 import UIKit
 
 protocol ItemDetailViewControllerDelegate: class {
@@ -24,6 +23,7 @@ class ItemDetailViewController: UITableViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.rowHeight = 44
         
         if let item = itemToEdit {
             title = "Edit Item"
@@ -64,11 +64,11 @@ class ItemDetailViewController: UITableViewController, UITextFieldDelegate {
         }
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 1 && datePickerVisible {
-            return 3
+    override func tableView(tableView: UITableView, willSelectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath? {
+        if indexPath.section == 1 && indexPath.row == 1{
+            return indexPath
         } else {
-            return super.tableView(tableView, numberOfRowsInSection: section)
+            return nil
         }
     }
     
@@ -80,19 +80,26 @@ class ItemDetailViewController: UITableViewController, UITextFieldDelegate {
         }
     }
     
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        if indexPath.section == 1 && indexPath.row == 2 {
-            return 217
+    override func tableView(tableView: UITableView, var indentationLevelForRowAtIndexPath indexPath: NSIndexPath) -> Int {
+        if indexPath.section == 1 && indexPath.row == 2{
+            indexPath = NSIndexPath(forRow: 0, inSection: indexPath.section)
+        }
+        return super.tableView(tableView, indentationLevelForRowAtIndexPath: indexPath)
+    }
+    
+    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if section == 1 && datePickerVisible {
+            return 3
         } else {
-            return super.tableView(tableView, heightForRowAtIndexPath: indexPath)
+            return super.tableView(tableView, numberOfRowsInSection: section)
         }
     }
     
-    override func tableView(tableView: UITableView, willSelectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath? {
-        if indexPath.section == 1 && indexPath.row == 1 {
-            return indexPath
+    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        if indexPath.section == 1 && indexPath.row == 2{
+            return 217
         } else {
-            return nil
+            return super.tableView(tableView, heightForRowAtIndexPath: indexPath)
         }
     }
     
@@ -100,7 +107,7 @@ class ItemDetailViewController: UITableViewController, UITextFieldDelegate {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
         textField.resignFirstResponder()
         
-        if indexPath.section == 1 && indexPath.row == 1 {
+        if indexPath.section == 1 && indexPath.row == 1{
             if !datePickerVisible {
                 showDatePicker()
             } else {
@@ -109,14 +116,8 @@ class ItemDetailViewController: UITableViewController, UITextFieldDelegate {
         }
     }
     
-    override func tableView(tableView: UITableView, var indentationLevelForRowAtIndexPath indexPath: NSIndexPath) -> Int {
-        if indexPath.section == 1 && indexPath.row == 2 {
-            indexPath = NSIndexPath(forRow: 0, inSection: indexPath.section)
-        }
-        return super.tableView(tableView, indentationLevelForRowAtIndexPath: indexPath)
-    }
-    
-    func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
+    func textField(textField: UITextField,shouldChangeCharactersInRange range: NSRange,replacementString string: String) -> Bool {
+        
         let oldText: NSString = textField.text!
         let newText: NSString = oldText.stringByReplacingCharactersInRange(range, withString: string)
         
@@ -124,11 +125,7 @@ class ItemDetailViewController: UITableViewController, UITextFieldDelegate {
         return true
     }
     
-    func textFieldDidBeginEditing(textField: UITextField) {
-        hideDatePicker()
-    }
-    
-    func updateDueDateLabel() {
+    func updateDueDateLabel(){
         let formatter = NSDateFormatter()
         formatter.dateStyle = .MediumStyle
         formatter.timeStyle = .ShortStyle
@@ -139,8 +136,8 @@ class ItemDetailViewController: UITableViewController, UITextFieldDelegate {
         datePickerVisible = true
         
         let indexPathDateRow = NSIndexPath(forRow: 1, inSection: 1)
-        let indexPathDatePicker = NSIndexPath(forRow: 2, inSection: 1)
         
+        let indexPathDatePicker = NSIndexPath(forRow: 2, inSection: 1)
         if let dateCell = tableView.cellForRowAtIndexPath(indexPathDateRow) {
             dateCell.detailTextLabel!.textColor = dateCell.detailTextLabel!.tintColor
         }
@@ -158,7 +155,7 @@ class ItemDetailViewController: UITableViewController, UITextFieldDelegate {
             datePickerVisible = false
             
             let indexPathDateRow = NSIndexPath(forRow: 1, inSection: 1)
-            let indexPathDatePicker = NSIndexPath(forRow: 2, inSection: 1)
+            let indexPathDatePicker  = NSIndexPath(forRow: 2, inSection: 1)
             
             if let cell = tableView.cellForRowAtIndexPath(indexPathDateRow) {
                 cell.detailTextLabel!.textColor = UIColor(white: 0, alpha: 0.5)
@@ -171,17 +168,22 @@ class ItemDetailViewController: UITableViewController, UITextFieldDelegate {
         }
     }
     
+    func textFieldDidBeginEditing(textField: UITextField) {
+        hideDatePicker()
+    }
+    
     @IBAction func dateChanged(datePicker: UIDatePicker) {
         dueDate = datePicker.date
         updateDueDateLabel()
     }
     
-    @IBAction func shouldRemindToggled(switchControl: UISwitch) {
+    @IBAction func shouldRemindToggled(switchControl: UISwitch){
         textField.resignFirstResponder()
         
         if switchControl.on {
-            let notificationSettings = UIUserNotificationSettings(forTypes: [.Alert , .Sound], categories: nil)
+            let notificationSettings = UIUserNotificationSettings(forTypes: [.Alert, .Sound], categories: nil)
             UIApplication.sharedApplication().registerUserNotificationSettings(notificationSettings)
         }
     }
+    
 }

@@ -1,10 +1,12 @@
 import UIKit
 
 class ChecklistViewController: UITableViewController, ItemDetailViewControllerDelegate {
+    
     var checklist: Checklist!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.rowHeight = 44
         title = checklist.name
     }
     
@@ -18,8 +20,7 @@ class ChecklistViewController: UITableViewController, ItemDetailViewControllerDe
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        
-        let cell = tableView.dequeueReusableCellWithIdentifier("ChecklistItem", forIndexPath: indexPath)
+        let cell = tableView.dequeueReusableCellWithIdentifier("ChecklistItem") as UITableViewCell!
         
         let item = checklist.items[indexPath.row]
         
@@ -30,7 +31,6 @@ class ChecklistViewController: UITableViewController, ItemDetailViewControllerDe
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        
         if let cell = tableView.cellForRowAtIndexPath(indexPath) {
             let item = checklist.items[indexPath.row]
             item.toggleChecked()
@@ -38,34 +38,32 @@ class ChecklistViewController: UITableViewController, ItemDetailViewControllerDe
             configureCheckmarkForCell(cell, withChecklistItem: item)
         }
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
+        
     }
     
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle,forRowAtIndexPath indexPath: NSIndexPath) {
-        
+    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         checklist.items.removeAtIndex(indexPath.row)
         
         let indexPaths = [indexPath]
         tableView.deleteRowsAtIndexPaths(indexPaths, withRowAnimation: .Automatic)
-    }
-    
-    func configureTextForCell(cell: UITableViewCell, withChecklistItem item: ChecklistItem) {
-        let label = cell.viewWithTag(1000) as! UILabel
-        label.text = item.text
         
-        // For debugging
-        //label.text = "\(item.itemID): \(item.text)"
     }
     
     func configureCheckmarkForCell(cell: UITableViewCell, withChecklistItem item: ChecklistItem) {
         let label = cell.viewWithTag(1001) as! UILabel
+        label.textColor = view.tintColor
         
         if item.checked {
             label.text = "√"
         } else {
             label.text = ""
         }
-        
-        label.textColor = view.tintColor
+    }
+    
+    func configureTextForCell(cell: UITableViewCell, withChecklistItem item: ChecklistItem) {
+        let label = cell.viewWithTag(1000) as!UILabel
+//        label.text = item.text
+        label.text = "\(item.itemID): \(item.text)"
     }
     
     func itemDetailViewControllerDidCancel(controller: ItemDetailViewController) {
@@ -82,6 +80,7 @@ class ChecklistViewController: UITableViewController, ItemDetailViewControllerDe
         tableView.insertRowsAtIndexPaths(indexPaths, withRowAnimation: .Automatic)
         
         dismissViewControllerAnimated(true, completion: nil)
+        
     }
     
     func itemDetailViewController(controller: ItemDetailViewController, didFinishEditingItem item: ChecklistItem) {
@@ -92,6 +91,7 @@ class ChecklistViewController: UITableViewController, ItemDetailViewControllerDe
             }
         }
         dismissViewControllerAnimated(true, completion: nil)
+        
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -99,15 +99,15 @@ class ChecklistViewController: UITableViewController, ItemDetailViewControllerDe
             let navigationController = segue.destinationViewController as! UINavigationController
             let controller = navigationController.topViewController as! ItemDetailViewController
             controller.delegate = self
-            
         } else if segue.identifier == "EditItem" {
             let navigationController = segue.destinationViewController as! UINavigationController
             let controller = navigationController.topViewController as! ItemDetailViewController
             controller.delegate = self
             
-            if let indexPath = tableView.indexPathForCell( sender as! UITableViewCell) {
+            if let indexPath = tableView.indexPathForCell(sender as! UITableViewCell) {
                 controller.itemToEdit = checklist.items[indexPath.row]
             }
         }
     }
+    
 }

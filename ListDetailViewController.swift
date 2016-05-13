@@ -18,6 +18,7 @@ class ListDetailViewController: UITableViewController, UITextFieldDelegate, Icon
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.rowHeight = 44
         
         if let checklist = checklistToEdit {
             title = "Edit Checklist"
@@ -57,6 +58,13 @@ class ListDetailViewController: UITableViewController, UITextFieldDelegate, Icon
         }
     }
     
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?){
+        if segue.identifier == "PickIcon"{
+            let controller = segue.destinationViewController as! IconPickerViewController
+            controller.delegate = self
+        }
+    }
+    
     func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
         let oldText: NSString = textField.text!
         let newText: NSString = oldText.stringByReplacingCharactersInRange(range, withString: string)
@@ -64,16 +72,11 @@ class ListDetailViewController: UITableViewController, UITextFieldDelegate, Icon
         return true
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "PickIcon" {
-            let controller = segue.destinationViewController as! IconPickerViewController
-            controller.delegate = self
-        }
-    }
-    
     func iconPicker(picker: IconPickerViewController, didPickIcon iconName: String) {
         self.iconName = iconName
         iconImageView.image = UIImage(named: iconName)
         navigationController?.popViewControllerAnimated(true)
     }
+    
+
 }
